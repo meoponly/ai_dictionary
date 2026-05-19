@@ -429,6 +429,87 @@
             margin: 0;
         }
 
+        /* ==========================================================================
+           API SETTINGS POOL OVERLAY PANEL DIALOG
+           ========================================================================== */
+        .api-config-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+        }
+
+        .api-config-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px;
+            width: 90%;
+            max-width: 540px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .api-config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .api-config-header h3 {
+            margin: 0; font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;
+        }
+
+        .api-pool-description {
+            font-size: 0.88rem; color: var(--text-muted); margin: 0 0 20px 0; line-height: 1.5;
+        }
+
+        .api-inputs-container {
+            max-height: 240px; overflow-y: auto; margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px; padding-right: 4px;
+        }
+
+        .api-input-row {
+            display: flex; gap: 8px; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 14px;
+        }
+
+        .api-row-badge {
+            font-size: 0.82rem; font-weight: 700; color: var(--text-muted); min-width: 52px;
+        }
+
+        .api-input-row input {
+            flex: 1; padding: 10px 4px; border: none; outline: none; background: transparent; font-family: inherit; font-size: 0.9rem; color: var(--text-main);
+        }
+
+        .api-input-row .icon-btn {
+            background: #ffffff; width: 36px; height: 36px; border-radius: 10px;
+        }
+
+        /* Simple modern text-based close button layout style rules */
+        .api-remove-text-btn {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .api-remove-text-btn:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
         .history-drawer {
             position: fixed;
             top: 0;
@@ -465,10 +546,13 @@
         .search-box {
             padding: 16px 24px;
             border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .search-box input {
-            width: 100%;
+            flex: 1;
             padding: 12px 16px;
             border-radius: 12px;
             border: 1px solid #e2e8f0;
@@ -594,8 +678,7 @@
             <button class="text-ai-btn" onclick="toggleModal(true)">Ask AI</button>
             <button class="icon-btn" onclick="toggleHistory()" title="View History Logs">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" style="width:20px; height:20px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                </svg>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25%22/></svg>
             </button>
         </div>
     </div>
@@ -610,7 +693,7 @@
             </div>
         </div>
         <h2 class="loader-status-msg" id="loaderStatusText">Finding words...</h2>
-        <p class="loader-sub-msg">Structuring your educational content stream.</p>
+        <p class="loader-sub-msg" id="loaderSubMessage">Structuring your educational content stream.</p>
     </div>
 
     <div id="workspace">
@@ -633,6 +716,28 @@
     </div>
 </div>
 
+<div class="api-config-overlay" id="apiConfigOverlay" onclick="closeConfigOutside(event)">
+    <div class="api-config-card">
+        <div class="api-config-header">
+            <h3>Gemini API Rotation Vault</h3>
+            <button class="icon-btn" style="width:32px; height:32px; border-radius:8px;" onclick="toggleConfigMenu(false)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <p class="api-pool-description">Add multiple keys below. If a key runs completely out of quota limits, the system will instantly jump to the next one automatically.</p>
+        
+        <div class="api-inputs-container" id="apiInputsPoolContainer">
+            </div>
+
+        <div class="api-action-btn-row">
+            <button class="api-secondary-btn" onclick="addNewKeyRowField()">+ Add Key Slot</button>
+            <button class="api-primary-btn" onclick="saveApiKeysPool()">Save Pool Config</button>
+        </div>
+    </div>
+</div>
+
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleHistory()"></div>
 <div class="history-drawer" id="historyDrawer">
     <div class="drawer-header">
@@ -644,7 +749,13 @@
         </button>
     </div>
     <div class="search-box">
-        <input type="text" id="historySearch" placeholder="Search saved phrases or topics..." oninput="renderHistory()">
+        <input type="text" id="historySearch" placeholder="Search saved phrases..." oninput="renderHistory()">
+        <button class="icon-btn" onclick="toggleConfigMenu(true)" title="Configure API Vault Menu" style="width: 44px; height: 44px; flex-shrink: 0;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.767a1.123 1.123 0 0 0-.417 1.03c.004.074.006.148.006.222 0 .074-.002.148-.006.222a1.123 1.123 0 0 0 .417 1.03l1.003.767a1.125 1.125 0 0 1 .26 1.43l-1.296 2.247a1.125 1.125 0 0 1-1.37.49l-1.216-.456a1.125 1.125 0 0 0-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281a1.125 1.125 0 0 0-.645-.87a6.528 6.528 0 0 1-.22-.127a1.125 1.125 0 0 0-1.074-.124l-1.217.456a1.125 1.125 0 0 1-1.37-.49l-1.296-2.247a1.125 1.125 0 0 1 .26-1.43l1.003-.767a1.122 1.122 0 0 0 .417-1.03a6.445 6.445 0 0 1-.006-.222c0-.074.002-.148.006-.222a1.122 1.122 0 0 0-.417-1.03l-1.003-.767a1.125 1.125 0 0 1-.26-1.43l1.296-2.247a1.125 1.125 0 0 1 1.37-.49l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128c.332-.183.582-.495.644-.869l.214-1.28Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+        </button>
     </div>
     <div class="drawer-content" id="historyContent"></div>
 </div>
@@ -654,16 +765,130 @@
         AI can make mistakes. Please verify critical educational data.
     </div>
     <div class="footer-copyright">
-        © 2026 Meoponly — All rights reserved.
+        © 2026 Meoponly — All rights reserved.<br>
+        Developed with logic by Meoponly
     </div>
 </footer>
 
 <script>
-    const apiKey = 'AIzaSyCFD_xnfqoMrfTLpZgkfu1QDtHZl8HX6LE';
+    let apiKeysPool = ['AIzaSyCFD_xnfqoMrfTLpZgkfu1QDtHZl8HX6LE'];
+    let currentKeyIndex = 0;
+    
     let statusInterval;
     let percentageInterval;
     let lastScrollY = window.scrollY;
     const navWrapper = document.getElementById('navWrapper');
+
+    function initApiPoolStorage() {
+        const stored = localStorage.getItem('gemini_keys_pool');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    apiKeysPool = parsed;
+                }
+            } catch(err) { console.error("API configuration error.", err); }
+        }
+    }
+
+    function toggleConfigMenu(show) {
+        const overlay = document.getElementById('apiConfigOverlay');
+        overlay.style.display = show ? 'flex' : 'none';
+        if (show) {
+            renderConfigMenuRows();
+        }
+    }
+
+    function closeConfigOutside(e) {
+        if(e.target.id === 'apiConfigOverlay') toggleConfigMenu(false);
+    }
+
+    function renderConfigMenuRows() {
+        const container = document.getElementById('apiInputsPoolContainer');
+        container.innerHTML = "";
+        apiKeysPool.forEach((key, index) => {
+            appendKeyFieldElement(container, key, index);
+        });
+        if(apiKeysPool.length === 0) addNewKeyRowField();
+        updateRowNumberBadges();
+    }
+
+    function appendKeyFieldElement(container, keyValue = "", index = 0) {
+        const row = document.createElement('div');
+        row.className = 'api-input-row';
+        row.innerHTML = `
+            <div class="api-row-badge">Key #${index + 1}</div>
+            <input type="password" class="pool-key-input-field" value="${keyValue}" placeholder="AIzaSy..." />
+            <button class="icon-btn" onclick="toggleKeyVisibility(this)" title="Toggle Key Visibility" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.645C3.543 8.928 7.311 5 12 5c4.69 0 8.457 3.928 9.964 6.677a1.012 1.012 0 0 1 0 .645C20.457 15.072 16.69 19 12 19c-4.69 0-8.457-3.928-9.964-6.677Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+            </button>
+            <button class="api-remove-text-btn" onclick="removeKeyRowField(this)" title="Delete Key Slot" type="button">✕</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function addNewKeyRowField() {
+        const container = document.getElementById('apiInputsPoolContainer');
+        appendKeyFieldElement(container, "", container.children.length);
+        updateRowNumberBadges();
+    }
+
+    function removeKeyRowField(btnElement) {
+        btnElement.closest('.api-input-row').remove();
+        updateRowNumberBadges();
+    }
+
+    function updateRowNumberBadges() {
+        const rows = document.querySelectorAll('.api-inputs-container .api-input-row');
+        rows.forEach((row, idx) => {
+            const badge = row.querySelector('.api-row-badge');
+            if (badge) badge.innerText = `Key #${idx + 1}`;
+        });
+    }
+
+    function toggleKeyVisibility(btnElement) {
+        const row = btnElement.closest('.api-input-row');
+        const input = row.querySelector('.pool-key-input-field');
+        if (input.type === 'password') {
+            input.type = 'text';
+            btnElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.434 14.762 7.202 18 12 18c1.74 0 3.344-.43 4.774-1.186M9.616 9.616a3 3 0 1 1 4.243 4.243m-4.243-4.243L1.5 1.5m11.234 11.234 8.5 8.5M20.03 16.764c1.31-1.332 2.037-3.003 2.037-4.764 0-4.69-3.766-8.677-8.457-8.677a10.422 10.422 0 0 0-4.76 1.144" />
+                </svg>
+            `;
+        } else {
+            input.type = 'password';
+            btnElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.645C3.543 8.928 7.311 5 12 5c4.69 0 8.457 3.928 9.964 6.677a1.012 1.012 0 0 1 0 .645C20.457 15.072 16.69 19 12 19c-4.69 0-8.457-3.928-9.964-6.677Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+            `;
+        }
+    }
+
+    function saveApiKeysPool() {
+        const inputNodes = document.querySelectorAll('.pool-key-input-field');
+        const cleanKeys = [];
+        inputNodes.forEach(node => {
+            const val = node.value.trim();
+            if(val) cleanKeys.push(val);
+        });
+
+        if(cleanKeys.length === 0) {
+            alert("Please enter at least one single fallback API key value parameter.");
+            return;
+        }
+
+        apiKeysPool = cleanKeys;
+        currentKeyIndex = 0; 
+        localStorage.setItem('gemini_keys_pool', JSON.stringify(apiKeysPool));
+        alert(`Successfully synchronized ${apiKeysPool.length} keys into rotation routing pool!`);
+        toggleConfigMenu(false);
+    }
 
     window.addEventListener('scroll', () => {
         if (window.scrollY > lastScrollY && window.scrollY > 120) {
@@ -726,6 +951,7 @@
 
         document.getElementById('workspace').style.display = 'none';
         document.getElementById('fullscreenLoader').style.display = 'flex';
+        document.getElementById('loaderSubMessage').innerText = "Structuring your educational content stream.";
         
         const progressBarFill = document.getElementById('metricProgressBar');
         const percentageLabel = document.getElementById('percentageLabel');
@@ -782,36 +1008,58 @@ Output everything strictly on a single line matching this precise schema layout 
 Example Correct Output structure:
 [Class 8 Tech] Software*सॉफ्टवेअर-संगणक प्रणाली*Programs used by a computer, Hardware*हार्डवेअर-भौतिक भाग*Physical parts of a computer`;
 
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [
-                        { role: "user", parts: [{ text: `${systemInstruction}\n\nUser Request: ${userPrompt}` }] }
-                    ]
-                })
-            });
+        let executionSuccess = false;
+        let keysTriedCount = 0;
 
-            const data = await response.json();
-            if (!data.candidates || data.candidates.length === 0) throw new Error("Invalid response format.");
+        while (!executionSuccess && keysTriedCount < apiKeysPool.length) {
+            const activeKey = apiKeysPool[currentKeyIndex];
+            
+            if (keysTriedCount > 0) {
+                document.getElementById('loaderSubMessage').innerText = `Quota exhausted. Rotating to Fallback API Key #${currentKeyIndex + 1}...`;
+            }
 
-            document.getElementById('metricProgressBar').style.width = '100%';
-            document.getElementById('percentageLabel').innerHTML = `100% <span>Completed!</span>`;
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeKey}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [
+                            { role: "user", parts: [{ text: `${systemInstruction}\n\nUser Request: ${userPrompt}` }] }
+                        ]
+                    })
+                });
 
-            setTimeout(() => {
-                const aiTextResponse = data.candidates[0].content.parts[0].text.trim();
-                parseAndSaveRawData(aiTextResponse);
-                document.getElementById('aiPromptInput').value = "";
-                stopLoadingStatus(submitBtn);
-                submitBtn.disabled = false;
-                const innerTextNode = submitBtn.querySelector('.btn-text-shifter');
-                if (innerTextNode) innerTextNode.innerText = "Generate entries";
-            }, 250);
+                if (response.status === 429 || response.status === 403 || !response.ok) {
+                    throw new Error(`Quota limit error response state encountered: ${response.status}`);
+                }
 
-        } catch (error) {
-            console.error(error);
-            alert("Error communicating with AI engine. Please verify parameters.");
+                const data = await response.json();
+                if (!data.candidates || data.candidates.length === 0) throw new Error("Invalid format mapping array data.");
+
+                document.getElementById('metricProgressBar').style.width = '100%';
+                document.getElementById('percentageLabel').innerHTML = `100% <span>Completed!</span>`;
+
+                setTimeout(() => {
+                    const aiTextResponse = data.candidates[0].content.parts[0].text.trim();
+                    parseAndSaveRawData(aiTextResponse);
+                    document.getElementById('aiPromptInput').value = "";
+                    stopLoadingStatus(submitBtn);
+                    submitBtn.disabled = false;
+                    const innerTextNode = submitBtn.querySelector('.btn-text-shifter');
+                    if (innerTextNode) innerTextNode.innerText = "Generate entries";
+                }, 250);
+
+                executionSuccess = true; 
+
+            } catch (err) {
+                console.warn(`Key Index Target [${currentKeyIndex}] failed validation routing limits. Attempting shift rotation...`, err);
+                currentKeyIndex = (currentKeyIndex + 1) % apiKeysPool.length;
+                keysTriedCount++;
+            }
+        }
+
+        if (!executionSuccess) {
+            alert("All keys in the API configuration pool have run out of quota, or network connectivity failed. Tap the gear icon in the menu to add fresh keys.");
             stopLoadingStatus(submitBtn);
             submitBtn.disabled = false;
             const innerTextNode = submitBtn.querySelector('.btn-text-shifter');
@@ -978,6 +1226,7 @@ Example Correct Output structure:
     }
 
     window.onload = function() {
+        initApiPoolStorage();
         renderHistory();
         const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
         if(historyData.length > 0) displayWorkspaceSession(historyData[0]);

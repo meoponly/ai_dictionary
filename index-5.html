@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Dictionary</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%230284c7%22><path d=%22M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25%22/></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-color: #0284c7;
+            --accent-hover: #0369a1;
+            --border-soft: #e2e8f0;
+            --primary-blue: #2563eb;
+            --font-display: 'Sora', -apple-system, sans-serif;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .navbar-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 24px 0 24px;
+            box-sizing: border-box;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .navbar-wrapper.nav-hidden {
+            transform: translateY(-90px);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-radius: 16px;
+            background: #ffffff;
+            border: 1px solid var(--border-soft);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text-main);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .text-ai-btn {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .text-ai-btn:hover {
+            background: #dcfce7;
+            color: #14532d;
+            transform: translateY(-1px);
+        }
+
+        .icon-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-soft);
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            transition: all 0.15s ease;
+        }
+
+        .icon-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .icon-btn.active {
+            background: #f1f5f9;
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 32px 24px;
+            box-sizing: border-box;
+            flex: 1;
+        }
+
+        .session-heading {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .session-title-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-soft);
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .vocab-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            opacity: 0;
+            transform: translateY(12px);
+            animation: cardEmerging 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .vocab-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.03);
+            transition: all 0.25s ease;
+        }
+
+        .word-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            padding-right: 12px;
+        }
+
+        .main-translation-row {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .word-number {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .translation-text {
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .pronunciation-row {
+            font-size: 0.9rem;
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-top: 1px;
+            padding-left: 2px;
+        }
+
+        .definition-row {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            line-height: 1.4;
+            margin-top: 6px;
+            border-left: 2px solid #e2e8f0;
+            padding-left: 8px;
+        }
+
+        .speak-btn {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-soft);
+            color: var(--accent-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-self: center;
+            transition: all 0.2s;
+        }
+
+        .speak-btn:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border-color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .speak-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            padding: 28px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 520px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            resize: none;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-color);
+            background: #ffffff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #0f172a;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .submit-btn:hover { background: #1e293b; }
+
+        .submit-btn.pulsing {
+            animation: textPulse 1.4s infinite ease-in-out;
+            cursor: wait;
+        }
+
+        .submit-btn:disabled { background: #64748b; }
+
+        .history-drawer {
+            position: fixed;
+            top: 0;
+            right: -460px;
+            width: 460px;
+            max-width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            border-left: 1px solid var(--border-soft);
+            transition: right 0.25s ease-out;
+        }
+
+        .history-drawer.open { right: 0; }
+
+        .drawer-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-header h2 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .search-box {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            position: relative;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-sizing: border-box;
+            outline: none;
+            background: #f8fafc;
+            font-family: inherit;
+        }
+
+        .flying-api-menu {
+            position: absolute;
+            top: 75px;
+            right: 24px;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+            z-index: 350;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.92) translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.2s;
+        }
+
+        .flying-api-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+        }
+
+        .api-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .api-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .api-input-row input {
+            flex: 1;
+            padding: 9px 12px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+            background: #ffffff;
+        }
+
+        .api-input-row input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .api-add-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .api-add-btn:hover { background: var(--accent-hover); }
+
+        .api-tags-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .api-tag {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #334155;
+            display: flex;
+            align-items: center;
+        }
+
+        .api-tag.active {
+            background: #e0f2fe;
+            border-color: #bae6fd;
+            color: #0369a1;
+        }
+
+        .drawer-content {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .history-date-group { margin-bottom: 28px; }
+
+        .history-date-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .history-item-card {
+            background: #ffffff;
+            border: 1px solid var(--border-soft);
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+        }
+
+        .history-item-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--accent-color);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .history-item-title { font-weight: 600; font-size: 0.95rem; color: #1e293b; margin-bottom: 4px; }
+        .history-item-preview { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.2);
+            display: none;
+            z-index: 290;
+        }
+
+        .drawer-overlay.open { display: block; }
+
+        footer {
+            width: 100%;
+            max-width: 1000px;
+            padding: 40px 24px;
+            box-sizing: border-box;
+            text-align: center;
+            border-top: 1px solid var(--border-soft);
+            margin-top: 60px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-disclaimer {
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+        }
+
+        .footer-copyright {
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            color: #475569;
+        }
+
+        .no-data { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 0.95rem; font-weight: 500; }
+
+        @keyframes cardEmerging {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes textPulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar-wrapper" id="navWrapper">
+    <div class="navbar">
+        <h1>AI Dictionary</h1>
+        <div class="nav-right">
+            <button class="text-ai-btn" onclick="toggleModal(true)">Ask AI</button>
+            <button class="icon-btn" id="historyBtn" onclick="toggleHistory()" title="View History Logs">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" style="width:20px; height:20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div id="workspace">
+        <p class="no-data" id="emptyState">No words loaded yet. Click 'Ask AI' at the top right to generate your first session!</p>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Generate Vocabulary Stream</h3>
+            <button class="icon-btn" style="width:32px; height:32px; border-radius:8px;" onclick="toggleModal(false)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <textarea id="aiPromptInput" placeholder="Describe the words you want (e.g., '12 space words for Class 8 students') and press Enter" onkeydown="handleEnterKey(event)"></textarea>
+        <button class="submit-btn" id="aiSubmitBtn" onclick="generateWithAI()">Generate entries</button>
+    </div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleHistory()"></div>
+<div class="history-drawer" id="historyDrawer">
+    <div class="drawer-header">
+        <h2>Study Session Logs</h2>
+        <button class="icon-btn" style="width:32px; height:32px; border-radius:8px;" onclick="toggleHistory()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px; height:16px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="historySearch" placeholder="Search saved phrases or topics..." oninput="renderHistory()">
+        <button class="icon-btn" id="settingsBtn" onclick="toggleApiPanel()" title="Configure API Keys">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" style="width:20px; height:20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.767a1.123 1.123 0 0 0-.417 1.03c.004.074.006.148.006.222 0 .074-.002.148-.006.222a1.123 1.123 0 0 0 .417 1.03l1.003.767a1.125 1.125 0 0 1 .26 1.43l-1.296 2.247a1.125 1.125 0 0 1-1.37.49l-1.216-.456a1.125 1.125 0 0 0-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281a1.125 1.125 0 0 0-.646-.87a6.512 6.512 0 0 1-.22-.127a1.125 1.125 0 0 0-1.074-.124l-1.217.456a1.125 1.125 0 0 1-1.37-.49l-1.296-2.247a1.125 1.125 0 0 1 .26-1.43l1.003-.767a1.122 1.122 0 0 0 .417-1.03a6.445 6.445 0 0 1-.006-.222c0-.074.002-.149.006-.222a1.122 1.122 0 0 0-.417-1.03l-1.003-.767a1.125 1.125 0 0 1-.26-1.43l1.296-2.247a1.125 1.125 0 0 1 1.37-.49l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128c.332-.183.582-.495.644-.869l.214-1.281z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+            </svg>
+        </button>
+
+        <div class="flying-api-menu" id="apiPanel">
+            <span class="api-label">Gemini API Key Bank</span>
+            <div class="api-input-row">
+                <input type="password" id="newApiKeyInput" placeholder="Paste Gemini API key here...">
+                <button class="api-add-btn" onclick="addNewKey()">Add</button>
+            </div>
+            <div class="api-tags-list" id="apiTagsList"></div>
+        </div>
+    </div>
+
+    <div class="drawer-content" id="historyContent"></div>
+</div>
+
+<script>
+    // ─── State ────────────────────────────────────────────────────────────────
+    const DEFAULT_KEY = 'AIzaSyB-0QL6-2RnR8YvctO8lhf2Gy19z5hD18A';
+
+    function loadKeys() {
+        const stored = localStorage.getItem('gemini_api_keys');
+        const parsed = stored ? JSON.parse(stored) : null;
+        return (Array.isArray(parsed) && parsed.length > 0) ? parsed : [DEFAULT_KEY];
+    }
+
+    function saveKeys(keys) {
+        localStorage.setItem('gemini_api_keys', JSON.stringify(keys));
+    }
+
+    // currentKeyIndex tracks which key to START from next call.
+    // On success we advance it by 1 so the next call starts from the next key.
+    // On failure we advance past the failed key automatically inside the loop.
+    function loadKeyIndex() {
+        const v = parseInt(localStorage.getItem('current_api_key_index'));
+        return isNaN(v) ? 0 : v;
+    }
+
+    function saveKeyIndex(idx) {
+        localStorage.setItem('current_api_key_index', idx);
+    }
+
+    let statusInterval = null;
+    let lastScrollY = window.scrollY;
+    const navWrapper = document.getElementById('navWrapper');
+
+    // ─── Navbar hide on scroll ────────────────────────────────────────────────
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > lastScrollY && window.scrollY > 120) {
+            navWrapper.classList.add('nav-hidden');
+        } else {
+            navWrapper.classList.remove('nav-hidden');
+        }
+        lastScrollY = window.scrollY;
+    });
+
+    // ─── Modal ────────────────────────────────────────────────────────────────
+    function toggleModal(show) {
+        document.getElementById('modalOverlay').style.display = show ? 'flex' : 'none';
+        if (show) document.getElementById('aiPromptInput').focus();
+    }
+
+    function closeModalOutside(e) {
+        if (e.target.id === 'modalOverlay') toggleModal(false);
+    }
+
+    function handleEnterKey(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            generateWithAI();
+        }
+    }
+
+    // ─── Settings panel ───────────────────────────────────────────────────────
+    function toggleApiPanel() {
+        const panel = document.getElementById('apiPanel');
+        const btn   = document.getElementById('settingsBtn');
+        const isOpen = panel.classList.toggle('open');
+        btn.classList.toggle('active', isOpen);
+        if (isOpen) renderApiTags();
+    }
+
+    function renderApiTags() {
+        const keys        = loadKeys();
+        const activeIdx   = loadKeyIndex() % keys.length;
+        const container   = document.getElementById('apiTagsList');
+        container.innerHTML = '';
+
+        if (keys.length === 0) {
+            container.innerHTML = '<span style="font-size:0.8rem; color:var(--text-muted);">No keys loaded.</span>';
+            return;
+        }
+
+        keys.forEach((key, i) => {
+            const isCurrent  = (i === activeIdx);
+            const obfuscated = key.length > 10
+                ? `${key.substring(0, 6)}...${key.substring(key.length - 4)}`
+                : 'Invalid Key';
+
+            const tag = document.createElement('div');
+            tag.className = `api-tag${isCurrent ? ' active' : ''}`;
+            tag.innerHTML = `<span>${isCurrent ? '● ' : ''}Key ${i + 1} (${obfuscated})</span>`;
+            container.appendChild(tag);
+        });
+    }
+
+    function addNewKey() {
+        const input = document.getElementById('newApiKeyInput');
+        const value = input.value.trim();
+        if (!value) return;
+
+        if (!value.startsWith('AIzaSy') || value.length < 20) {
+            alert("Invalid key pattern format. Gemini API keys must begin with 'AIzaSy' and be completely pasted.");
+            return;
+        }
+
+        let keys = loadKeys();
+
+        // Replace the lone default fallback key when user adds their own
+        if (keys.length === 1 && keys[0] === DEFAULT_KEY) {
+            keys = [];
+            saveKeyIndex(0);
+        }
+
+        if (!keys.includes(value)) {
+            keys.push(value);
+            saveKeys(keys);
+            renderApiTags();
+        }
+
+        input.value = '';
+    }
+
+    // ─── Loading status cycling ───────────────────────────────────────────────
+    function startLoadingStatus(btn) {
+        const statuses = [
+            'Finding words...',
+            'Checking meanings...',
+            'Translating data...',
+            'Polishing definitions...'
+        ];
+        let i = 0;
+        btn.classList.add('pulsing');
+        btn.innerText = statuses[i];
+        statusInterval = setInterval(() => {
+            i = (i + 1) % statuses.length;
+            btn.innerText = statuses[i];
+        }, 1100);
+    }
+
+    function stopLoadingStatus(btn) {
+        clearInterval(statusInterval);
+        statusInterval = null;
+        btn.classList.remove('pulsing');
+    }
+
+    // ─── Core API call ────────────────────────────────────────────────────────
+    async function callGemini(apiKey, prompt, systemInstruction) {
+        const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [
+                        { role: 'user', parts: [{ text: `${systemInstruction}\n\nUser Request: ${prompt}` }] }
+                    ]
+                })
+            }
+        );
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        if (!data.candidates || data.candidates.length === 0) {
+            throw new Error('Empty candidates in response');
+        }
+        return data.candidates[0].content.parts[0].text.trim();
+    }
+
+    // ─── API Rotation Logic ───────────────────────────────────────────────────
+    // Strategy: try every key exactly once, starting from currentKeyIndex.
+    // On success: advance currentKeyIndex by 1 (so next call starts fresh from next key).
+    // On failure: move to the next key in the ring and keep trying.
+    // After exhausting all keys: report failure.
+    async function callGeminiWithRotation(userPrompt, systemInstruction) {
+        const keys = loadKeys();
+        if (keys.length === 0) throw new Error('No API keys configured.');
+
+        const startIdx = loadKeyIndex() % keys.length;
+
+        for (let attempt = 0; attempt < keys.length; attempt++) {
+            const keyIdx = (startIdx + attempt) % keys.length;
+            const key    = keys[keyIdx];
+
+            try {
+                const result = await callGemini(key, userPrompt, systemInstruction);
+
+                // Success → advance the persisted pointer so the next generate
+                // call begins on the key AFTER this successful one.
+                const nextIdx = (keyIdx + 1) % keys.length;
+                saveKeyIndex(nextIdx);
+
+                console.log(`✓ Key ${keyIdx + 1} succeeded.`);
+                return result;
+
+            } catch (err) {
+                console.warn(`✗ Key ${keyIdx + 1} failed:`, err.message);
+                // Loop continues to (keyIdx + 1) automatically
+            }
+        }
+
+        throw new Error('ALL_KEYS_EXHAUSTED');
+    }
+
+    // ─── Generate with AI ────────────────────────────────────────────────────
+    async function generateWithAI() {
+        const userPrompt = document.getElementById('aiPromptInput').value.trim();
+        if (!userPrompt) {
+            alert('Please specify what kind of words you need!');
+            return;
+        }
+
+        const submitBtn = document.getElementById('aiSubmitBtn');
+        submitBtn.disabled = true;
+        startLoadingStatus(submitBtn);
+
+        const systemInstruction = `You are an integrated vocabulary data formatting API. Process the prompt and match the word count exactly.
+Provide a short relevant group heading inside square brackets like [Class 7 Science] or [Verbs List].
+
+Output everything strictly on a single line matching this precise schema layout ruleset. Do NOT include markdown blocks, speech prefix intros, or code blocks:
+[Title Here] Word1*MarathiPronunciationOfEnglishWordInMarathiScript-MarathiMeaning*ShortEnglishDefinition, Word2*Pronunciation-Meaning*Definition
+
+Example Correct Output structure:
+[Class 8 Tech] Software*सॉफ्टवेअर-संगणक प्रणाली*Programs used by a computer, Hardware*हार्डवेअर-भौतिक भाग*Physical parts of a computer`;
+
+        try {
+            const aiText = await callGeminiWithRotation(userPrompt, systemInstruction);
+            parseAndSaveRawData(aiText);
+            document.getElementById('aiPromptInput').value = '';
+            toggleModal(false);
+        } catch (err) {
+            if (err.message === 'ALL_KEYS_EXHAUSTED') {
+                alert('All keys in your bank have exhausted or returned errors. Click the settings gear icon in logs to refresh your key index list.');
+            } else {
+                alert(`Unexpected error: ${err.message}`);
+            }
+        } finally {
+            stopLoadingStatus(submitBtn);
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Generate entries';
+        }
+    }
+
+    // ─── Parse & save ─────────────────────────────────────────────────────────
+    function parseAndSaveRawData(inputRaw) {
+        let heading      = 'Vocabulary Session';
+        let wordsDataRaw = inputRaw;
+
+        const headingMatch = inputRaw.match(/^\[(.*?)\]/);
+        if (headingMatch) {
+            heading      = headingMatch[1].trim();
+            wordsDataRaw = inputRaw.replace(/^\[.*?\]/, '').trim();
+        }
+
+        const processedList = [];
+
+        wordsDataRaw.split(',').forEach(pair => {
+            const parts = pair.split('*');
+            if (parts.length >= 2) {
+                const eng        = parts[0].trim();
+                const secondPart = parts[1];
+                const dashIndex  = secondPart.indexOf('-');
+
+                if (dashIndex !== -1) {
+                    const pronounce  = secondPart.substring(0, dashIndex).trim();
+                    const mar        = secondPart.substring(dashIndex + 1).trim();
+                    const definition = parts[2] ? parts[2].trim() : 'No short definition available';
+
+                    if (eng && mar) {
+                        processedList.push({ eng, pronounce, mar, definition });
+                    }
+                }
+            }
+        });
+
+        if (processedList.length === 0) {
+            alert('Formatting parser failure — match pattern verification error.');
+            return;
+        }
+
+        const now        = new Date();
+        const dateString = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        const timeString = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+        const session = { id: Date.now(), heading, date: dateString, time: timeString, words: processedList };
+
+        const history = JSON.parse(localStorage.getItem('vocab_history')) || [];
+        history.unshift(session);
+        localStorage.setItem('vocab_history', JSON.stringify(history));
+
+        displayWorkspaceSession(session);
+        renderHistory();
+    }
+
+    // ─── Render session ───────────────────────────────────────────────────────
+    function displayWorkspaceSession(session) {
+        const workspace = document.getElementById('workspace');
+        workspace.innerHTML = '';
+
+        const block = document.createElement('div');
+        block.className = 'session-block';
+
+        let html = `
+            <div class="session-heading">
+                <div class="session-title-tag">
+                    <span style="font-weight:700; color:var(--accent-color);">⚡</span>
+                    <span>${session.heading}</span>
+                </div>
+                <small style="font-size:0.88rem; color:var(--text-muted); font-weight:600; background:#ffffff; border:1px solid var(--border-soft); padding:4px 10px; border-radius:12px;">🕒 ${session.time}</small>
+            </div>
+            <div class="vocab-grid">
+        `;
+
+        session.words.forEach((item, idx) => {
+            const safeEng = item.eng.replace(/'/g, "\\'");
+            html += `
+                <div class="vocab-card" style="animation-delay: ${idx * 0.03}s;">
+                    <div class="word-info">
+                        <div class="main-translation-row">
+                            <span class="word-number">${idx + 1}.</span>
+                            <span>${item.eng}</span>
+                            <span style="color:#cbd5e1; font-weight:400; margin: 0 2px;">-</span>
+                            <span class="translation-text">${item.mar}</span>
+                        </div>
+                        ${item.pronounce ? `<div class="pronunciation-row">(${item.pronounce})</div>` : ''}
+                        <div class="definition-row">${item.definition}</div>
+                    </div>
+                    <button class="speak-btn" onclick="speakWord('${safeEng}')" title="Listen Audio">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-3 0L6 7H2v10h4l5 3.77V3.23z"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        block.innerHTML = html;
+        workspace.appendChild(block);
+    }
+
+    // ─── Speech ───────────────────────────────────────────────────────────────
+    function speakWord(word) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(word);
+        const voices    = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v => v.lang === 'en-IN' || v.name.includes('India'));
+        if (preferred) utterance.voice = preferred;
+        else utterance.lang = 'en-IN';
+        utterance.volume = 1.0;
+        utterance.rate   = 0.85;
+        utterance.pitch  = 0.95;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // ─── History drawer ───────────────────────────────────────────────────────
+    function toggleHistory() {
+        document.getElementById('historyDrawer').classList.toggle('open');
+        document.getElementById('drawerOverlay').classList.toggle('open');
+        document.getElementById('apiPanel').classList.remove('open');
+        document.getElementById('settingsBtn').classList.remove('active');
+    }
+
+    function renderHistory() {
+        const content    = document.getElementById('historyContent');
+        const searchTerm = document.getElementById('historySearch').value.toLowerCase();
+        const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
+
+        if (historyData.length === 0) {
+            content.innerHTML = '<p class="no-data">No history found yet.</p>';
+            return;
+        }
+
+        // Group by date, filtered by search
+        const groups = {};
+        historyData.forEach(session => {
+            const matchHeading = session.heading.toLowerCase().includes(searchTerm);
+            const matchWords   = session.words.some(w =>
+                w.eng.toLowerCase().includes(searchTerm) || w.mar.toLowerCase().includes(searchTerm)
+            );
+
+            if (!searchTerm || matchHeading || matchWords) {
+                if (!groups[session.date]) groups[session.date] = [];
+                groups[session.date].push(session);
+            }
+        });
+
+        let html = '';
+        for (const date in groups) {
+            html += `<div class="history-date-group"><div class="history-date-title">📅 ${date}</div>`;
+            groups[date].forEach(session => {
+                const preview = session.words.map(w => w.eng).join(', ');
+                html += `
+                    <div class="history-item-card" style="cursor:pointer;" onclick="loadSessionFromHistory(${session.id})">
+                        <div class="history-item-meta"><span>⏱️ ${session.time}</span><span>${session.words.length} Items</span></div>
+                        <div class="history-item-title">${session.heading}</div>
+                        <div class="history-item-preview">${preview}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        content.innerHTML = html || '<p class="no-data">No matching session results.</p>';
+    }
+
+    function loadSessionFromHistory(id) {
+        const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
+        const session     = historyData.find(s => s.id === id);
+        if (session) {
+            displayWorkspaceSession(session);
+            toggleHistory();
+        }
+    }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    window.onload = function () {
+        renderHistory();
+        const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
+        if (historyData.length > 0) displayWorkspaceSession(historyData[0]);
+    };
+</script>
+
+</body>
+</html>

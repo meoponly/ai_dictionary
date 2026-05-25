@@ -1397,7 +1397,16 @@ Output everything strictly on a single line matching this precise schema layout 
     // ─── Dictation Flow Core Logic ───
     function startDictationMode() {
         if (!activeWordsList || activeWordsList.length === 0) return;
-        
+
+        // ─── Mobile Audio Unlock (must run inside direct user gesture) ───
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            ctx.resume().then(() => ctx.close());
+        } catch(e) {}
+        const unlockUtterance = new SpeechSynthesisUtterance('');
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(unlockUtterance);
+
         dictationQueue = [...activeWordsList];
         dictationQueue.sort(() => Math.random() - 0.5);
         
@@ -1755,7 +1764,10 @@ If the user translation answer matches exactly, is a valid synonym variant, or i
 
     window.onload = function () {
         renderHistory();
-        if (window.speechSynthesis) window.speechSynthesis.getVoices();
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+        }
         const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
         if (historyData.length > 0) displayWorkspaceSession(historyData[0]);
     };

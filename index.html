@@ -35,6 +35,15 @@
             align-items: center;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Prevent button selections or chrome default flashing bugs */
+        button, .key-btn, .dictate-display-screen, .vocab-card {
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent !important;
+            outline: none !important;
         }
 
         .navbar-wrapper {
@@ -97,6 +106,26 @@
             transform: translateY(-1px);
         }
 
+        .dictate-nav-btn {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: none;
+        }
+
+        .dictate-nav-btn:hover {
+            background: #fee2e2;
+            color: #7f1d1d;
+            transform: translateY(-1px);
+        }
+
         .icon-btn {
             background: #ffffff;
             border: 1px solid var(--border-soft);
@@ -150,6 +179,13 @@
             padding: 6px 14px;
             border-radius: 20px;
             border: 1px solid var(--border-soft);
+        }
+
+        .status-completed-badge {
+            background: #dcfce7 !important;
+            border: 1px solid #bbf7d0 !important;
+            color: #15803d !important;
+            font-weight: 700;
         }
 
         .vocab-grid {
@@ -533,52 +569,253 @@
 
         .drawer-overlay.open { display: block; }
 
-        footer {
+        /* ─── Dictation Screen Overlay Module ──────────────────────────────────── */
+        .dictate-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 1000px;
-            padding: 40px 24px;
+            height: 100%;
+            background: #0f172a;
+            color: #ffffff;
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
             box-sizing: border-box;
-            text-align: center;
-            border-top: 1px solid var(--border-soft);
-            margin-top: 60px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
+            padding: 24px;
+            font-family: var(--font-sans);
+        }
+
+        .dictate-header {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dictate-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #38bdf8;
+        }
+
+        .dictate-close-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dictate-close-btn:hover { background: rgba(255, 255, 255, 0.18); }
+
+        .dictate-body {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 1;
+            gap: 20px;
+            width: 100%;
+            max-width: 750px;
         }
 
-        .footer-disclaimer {
-            font-weight: 400;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.5;
-            background: #ffffff;
-            padding: 8px 16px;
-            border-radius: 10px;
-            border: 1px solid var(--border-soft);
+        .dictate-ai-status {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: #f8fafc;
+            min-height: 60px;
         }
 
-        .footer-copyright {
+        .streak-callout {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.15);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: -10px;
+            display: none;
+            animation: textPulse 1s infinite;
+        }
+
+        /* Clickable interactive audio clue display mask wrapper box */
+        .dictate-display-screen {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            color: #38bdf8;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px dashed #334155;
+            padding: 16px 40px;
+            border-radius: 20px;
+            min-width: 240px;
+            max-width: 90%;
+            text-transform: uppercase;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dictate-display-screen:hover {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.05);
+            transform: scale(1.02);
+        }
+
+        .dictate-user-transcript {
+            font-size: 1.1rem;
+            color: #94a3b8;
             font-weight: 500;
-            letter-spacing: -0.01em;
-            color: #475569;
+            min-height: 30px;
         }
 
-        .no-data { text-align: center; color: var(--text-muted); margin-top: 60px; font-size: 0.95rem; font-weight: 500; }
-
-        @keyframes cardEmerging {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Custom Screen Keyboard Controls layout */
+        .custom-keyboard-container {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(30, 41, 59, 0.7);
+            padding: 16px;
+            border-radius: 24px;
+            border: 1px solid #334155;
+            box-sizing: border-box;
         }
 
-        @keyframes textPulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
         }
+
+        .key-btn {
+            flex: 1;
+            max-width: 56px;
+            height: 58px;
+            background: #334155;
+            border: none;
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px #1e293b;
+            transition: all 0.05s ease;
+        }
+
+        .key-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px #1e293b;
+        }
+
+        .key-btn.wide-key {
+            max-width: 110px;
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .key-btn.erase-key { background: #b91c1c; box-shadow: 0 4px #7f1d1d; }
+        .key-btn.submit-key { background: #15803d; box-shadow: 0 4px #14532d; max-width: 130px; }
+
+        /* Manual Marathi Input Controls Panel styles */
+        .marathi-mic-panel {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            background: rgba(30, 41, 59, 0.4);
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .mic-container {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mic-button {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        .mic-container.listening .mic-button {
+            background: #22c55e;
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+            transform: scale(1.05);
+        }
+
+        .mic-button svg { width: 32px; height: 32px; fill: currentColor; }
+
+        .mic-ripple {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: transparent;
+            z-index: 1;
+        }
+
+        .mic-container.listening .mic-ripple {
+            background: rgba(34, 197, 94, 0.25);
+            animation: micGlowRipple 1.4s infinite ease-out;
+        }
+
+        .dictate-footer-tip {
+            font-size: 0.88rem;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        @keyframes micGlowRipple {
+            0% { transform: scale(0.8); opacity: 0.9; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes cardEmerging { to { opacity: 1; transform: translateY(0); } }
+        @keyframes textPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
 </head>
 <body>
@@ -587,6 +824,7 @@
     <div class="navbar">
         <h1>AI Dictionary</h1>
         <div class="nav-right">
+            <button class="dictate-nav-btn" id="dictateModeBtn" onclick="startDictationMode()">Dictate</button>
             <button class="text-ai-btn" onclick="toggleModal(true)">Ask AI</button>
             <button class="icon-btn" id="historyBtn" onclick="toggleHistory()" title="View History Logs">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" style="width:20px; height:20px;">
@@ -651,6 +889,72 @@
     <div class="drawer-content" id="historyContent"></div>
 </div>
 
+<div class="dictate-overlay" id="dictateOverlay">
+    <div class="dictate-header">
+        <div class="dictate-title">🎙️ AI Dictation Mode</div>
+        <button class="dictate-close-btn" onclick="exitDictationMode()">Exit Session</button>
+    </div>
+    
+    <div class="dictate-body">
+        <div class="streak-callout" id="streakCallout">Wow! 3 in a row!</div>
+        <div class="dictate-ai-status" id="dictateAiStatus">Loading prompt context...</div>
+        
+        <div class="dictate-display-screen" id="dictateDisplayScreen" onclick="replayTargetAudioClue()" title="Click to listen to the word again">_</div>
+        
+        <div class="dictate-user-transcript" id="dictateTranscript">Use the screen keyboard below to type.</div>
+
+        <div class="custom-keyboard-container" id="customKeyboard">
+            <div class="keyboard-row">
+                <button class="key-btn" onclick="pressKey('Q')">Q</button>
+                <button class="key-btn" onclick="pressKey('W')">W</button>
+                <button class="key-btn" onclick="pressKey('E')">E</button>
+                <button class="key-btn" onclick="pressKey('R')">R</button>
+                <button class="key-btn" onclick="pressKey('T')">T</button>
+                <button class="key-btn" onclick="pressKey('Y')">Y</button>
+                <button class="key-btn" onclick="pressKey('U')">U</button>
+                <button class="key-btn" onclick="pressKey('I')">I</button>
+                <button class="key-btn" onclick="pressKey('O')">O</button>
+                <button class="key-btn" onclick="pressKey('P')">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key-btn" onclick="pressKey('A')">A</button>
+                <button class="key-btn" onclick="pressKey('S')">S</button>
+                <button class="key-btn" onclick="pressKey('D')">D</button>
+                <button class="key-btn" onclick="pressKey('F')">F</button>
+                <button class="key-btn" onclick="pressKey('G')">G</button>
+                <button class="key-btn" onclick="pressKey('H')">H</button>
+                <button class="key-btn" onclick="pressKey('J')">J</button>
+                <button class="key-btn" onclick="pressKey('K')">K</button>
+                <button class="key-btn" onclick="pressKey('L')">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key-btn wide-key erase-key" onclick="pressKey('ERASE')">Erase</button>
+                <button class="key-btn" onclick="pressKey('Z')">Z</button>
+                <button class="key-btn" onclick="pressKey('X')">X</button>
+                <button class="key-btn" onclick="pressKey('C')">C</button>
+                <button class="key-btn" onclick="pressKey('V')">V</button>
+                <button class="key-btn" onclick="pressKey('B')">B</button>
+                <button class="key-btn" onclick="pressKey('N')">N</button>
+                <button class="key-btn" onclick="pressKey('M')">M</button>
+                <button class="key-btn wide-key submit-key" onclick="pressKey('SUBMIT')">Submit</button>
+            </div>
+        </div>
+
+        <div class="marathi-mic-panel" id="marathiMicPanel">
+            <p style="margin:0 0 10px 0; font-weight:600; color:#38bdf8;">Tap Mic & speak translation in Marathi</p>
+            <div class="mic-container" id="micContainer">
+                <div class="mic-ripple"></div>
+                <button class="mic-button" onclick="triggerMarathiMicSpeech()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.49 6-3.31 6-6.72h-1.7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="dictate-footer-tip" id="dictateTip">Click the bracket display above if you need to hear the word again.</div>
+</div>
+
 <script>
     // ─── State ────────────────────────────────────────────────────────────────
     const DEFAULT_KEY = 'AIzaSyB-0QL6-2RnR8YvctO8lhf2Gy19z5hD18A';
@@ -665,9 +969,6 @@
         localStorage.setItem('gemini_api_keys', JSON.stringify(keys));
     }
 
-    // currentKeyIndex tracks which key to START from next call.
-    // On success we advance it by 1 so the next call starts from the next key.
-    // On failure we advance past the failed key automatically inside the loop.
     function loadKeyIndex() {
         const v = parseInt(localStorage.getItem('current_api_key_index'));
         return isNaN(v) ? 0 : v;
@@ -680,6 +981,20 @@
     let statusInterval = null;
     let lastScrollY = window.scrollY;
     const navWrapper = document.getElementById('navWrapper');
+
+    // ─── Dictation Session State Drivers ────────────────────────────────────
+    let activeWordsList = [];
+    let dictationQueue = [];
+    let currentDictationItem = null;
+    let dictationStage = 'spelling'; 
+    let typedSpellingBuffer = "";
+    let marathiSpeechRecognizer = null;
+    let isMarathiRecording = false;
+
+    // Combo & Streak Metrics tracking variables
+    let currentActiveSessionId = null;
+    let successfulSpellingStreak = 0;
+    let globalCompletedWordsCount = 0;
 
     // ─── Navbar hide on scroll ────────────────────────────────────────────────
     window.addEventListener('scroll', () => {
@@ -753,7 +1068,6 @@
 
         let keys = loadKeys();
 
-        // Replace the lone default fallback key when user adds their own
         if (keys.length === 1 && keys[0] === DEFAULT_KEY) {
             keys = [];
             saveKeyIndex(0);
@@ -815,11 +1129,6 @@
         return data.candidates[0].content.parts[0].text.trim();
     }
 
-    // ─── API Rotation Logic ───────────────────────────────────────────────────
-    // Strategy: try every key exactly once, starting from currentKeyIndex.
-    // On success: advance currentKeyIndex by 1 (so next call starts fresh from next key).
-    // On failure: move to the next key in the ring and keep trying.
-    // After exhausting all keys: report failure.
     async function callGeminiWithRotation(userPrompt, systemInstruction) {
         const keys = loadKeys();
         if (keys.length === 0) throw new Error('No API keys configured.');
@@ -832,21 +1141,14 @@
 
             try {
                 const result = await callGemini(key, userPrompt, systemInstruction);
-
-                // Success → advance the persisted pointer so the next generate
-                // call begins on the key AFTER this successful one.
                 const nextIdx = (keyIdx + 1) % keys.length;
                 saveKeyIndex(nextIdx);
-
                 console.log(`✓ Key ${keyIdx + 1} succeeded.`);
                 return result;
-
             } catch (err) {
                 console.warn(`✗ Key ${keyIdx + 1} failed:`, err.message);
-                // Loop continues to (keyIdx + 1) automatically
             }
         }
-
         throw new Error('ALL_KEYS_EXHAUSTED');
     }
 
@@ -930,7 +1232,7 @@ Example Correct Output structure:
         const dateString = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
         const timeString = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-        const session = { id: Date.now(), heading, date: dateString, time: timeString, words: processedList };
+        const session = { id: Date.now(), heading, date: dateString, time: timeString, words: processedList, completed: false };
 
         const history = JSON.parse(localStorage.getItem('vocab_history')) || [];
         history.unshift(session);
@@ -944,17 +1246,24 @@ Example Correct Output structure:
     function displayWorkspaceSession(session) {
         const workspace = document.getElementById('workspace');
         workspace.innerHTML = '';
+        
+        activeWordsList = session.words;
+        currentActiveSessionId = session.id;
+        document.getElementById('dictateModeBtn').style.display = activeWordsList.length > 0 ? 'block' : 'none';
 
         const block = document.createElement('div');
         block.className = 'session-block';
+
+        const badgeClass = session.completed ? "status-completed-badge" : "";
+        const badgeText = session.completed ? "✓ Clear" : "🕒 active";
 
         let html = `
             <div class="session-heading">
                 <div class="session-title-tag">
                     <span style="font-weight:700; color:var(--accent-color);">⚡</span>
-                    <span>${session.heading}</span>
+                    <span>${session.heading} ${session.completed ? "✓" : ""}</span>
                 </div>
-                <small style="font-size:0.88rem; color:var(--text-muted); font-weight:600; background:#ffffff; border:1px solid var(--border-soft); padding:4px 10px; border-radius:12px;">🕒 ${session.time}</small>
+                <small class="${badgeClass}" style="font-size:0.88rem; color:var(--text-muted); font-weight:600; background:#ffffff; border:1px solid var(--border-soft); padding:4px 10px; border-radius:12px;">${badgeText}</small>
             </div>
             <div class="vocab-grid">
         `;
@@ -973,7 +1282,7 @@ Example Correct Output structure:
                         ${item.pronounce ? `<div class="pronunciation-row">(${item.pronounce})</div>` : ''}
                         <div class="definition-row">${item.definition}</div>
                     </div>
-                    <button class="speak-btn" onclick="speakWord('${safeEng}')" title="Listen Audio">
+                    <button class="speak-btn" onclick="speakWord('${safeEng}', false)" title="Listen Audio">
                         <svg viewBox="0 0 24 24">
                             <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-3 0L6 7H2v10h4l5 3.77V3.23z"/>
                         </svg>
@@ -987,18 +1296,329 @@ Example Correct Output structure:
         workspace.appendChild(block);
     }
 
-    // ─── Speech ───────────────────────────────────────────────────────────────
-    function speakWord(word) {
+    // ─── High-Tier Dual-Pack Text to Speech Voice Integration Engine ──────────
+    function speakAI(text, isMarathiLanguagePack = false, slowLettersMode = false, callback = null) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(word);
-        const voices    = window.speechSynthesis.getVoices();
-        const preferred = voices.find(v => v.lang === 'en-IN' || v.name.includes('India'));
-        if (preferred) utterance.voice = preferred;
-        else utterance.lang = 'en-IN';
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+
+        if (isMarathiLanguagePack) {
+            // Target authentic regional Marathi speech voice synthesis packs
+            let marathiVoice = voices.find(v => v.lang.startsWith('mr-') || v.name.includes('Marathi'));
+            if (marathiVoice) {
+                utterance.voice = marathiVoice;
+            } else {
+                // Fallback to localized multi-lingual profiles if separate pack is absent
+                let alternativeInVoice = voices.find(v => v.lang.includes('IN'));
+                if (alternativeInVoice) utterance.voice = alternativeInVoice;
+            }
+            utterance.rate = 0.85;
+            utterance.pitch = 1.0;
+        } else {
+            // Standard high quality English Natural Pack profiles setup
+            let premiumVoice = voices.find(v => v.name.includes('Natural') && (v.lang.startsWith('en-US') || v.lang.startsWith('en-GB')));
+            if (!premiumVoice) premiumVoice = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en-'));
+            if (!premiumVoice) premiumVoice = voices.find(v => v.lang.startsWith('en-IN') || v.name.includes('India'));
+            
+            if (premiumVoice) utterance.voice = premiumVoice;
+            utterance.rate = slowLettersMode ? 0.35 : 0.94; 
+            utterance.pitch = slowLettersMode ? 0.85 : 0.98;
+        }
+
         utterance.volume = 1.0;
-        utterance.rate   = 0.85;
-        utterance.pitch  = 0.95;
+        utterance.onend = () => { if (callback) callback(); };
         window.speechSynthesis.speak(utterance);
+    }
+
+    function speakWord(word, useMarathiPack = false) { 
+        speakAI(word, useMarathiPack); 
+    }
+
+    // ─── Clickable Audio Clue Replay Routine ──────────────────────────────────
+    function replayTargetAudioClue() {
+        if (!currentDictationItem) return;
+        if (dictationStage === 'spelling') {
+            speakAI(currentDictationItem.eng);
+        } else {
+            // Replay Marathi sound pack safely
+            speakAI(currentDictationItem.mar, true);
+        }
+    }
+
+    // ─── Custom Interface Keyboard Input Core ──────────────────────────────────
+    function pressKey(char) {
+        if (char === 'ERASE') {
+            typedSpellingBuffer = typedSpellingBuffer.slice(0, -1);
+            document.getElementById('dictateDisplayScreen').innerText = typedSpellingBuffer || "_";
+        } else if (char === 'SUBMIT') {
+            if (!typedSpellingBuffer) return;
+            evaluateCustomKeyboardSpelling();
+        } else {
+            if (typedSpellingBuffer.length >= 24) return;
+            typedSpellingBuffer += char;
+            document.getElementById('dictateDisplayScreen').innerText = typedSpellingBuffer;
+        }
+    }
+
+    // ─── Dictation Flow Core Logic ──────────────────────────────────────────
+    function startDictationMode() {
+        if (!activeWordsList || activeWordsList.length === 0) return;
+        
+        dictationQueue = [...activeWordsList];
+        dictationQueue.sort(() => Math.random() - 0.5);
+        
+        // Reset streak metrics logs
+        successfulSpellingStreak = 0;
+        globalCompletedWordsCount = 0;
+        document.getElementById('streakCallout').style.display = 'none';
+
+        document.getElementById('dictateOverlay').style.display = 'flex';
+        document.body.style.overflow = 'hidden'; 
+        
+        nextDictationTurn();
+    }
+
+    function exitDictationMode() {
+        window.speechSynthesis.cancel();
+        killMarathiMicPipeline();
+        document.getElementById('dictateOverlay').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function nextDictationTurn() {
+        if (dictationQueue.length === 0) {
+            // Commit and save successful session completion status tags 
+            markCurrentSessionAsCompleted();
+
+            document.getElementById('dictateAiStatus').innerText = "List Mastered! 🎉";
+            document.getElementById('dictateDisplayScreen').innerText = "✓ Clear";
+            document.getElementById('dictateTranscript').innerText = "Fantastic! You cleared every single word in this collection.";
+            speakAI("Perfect! You have successfully completed all words in this session. Brilliant work!");
+            return;
+        }
+
+        currentDictationItem = dictationQueue.shift();
+        dictationStage = 'spelling'; 
+        
+        document.getElementById('customKeyboard').style.display = 'flex';
+        document.getElementById('marathiMicPanel').style.display = 'none';
+        
+        triggerDictationQuestion();
+    }
+
+    function triggerDictationQuestion() {
+        typedSpellingBuffer = "";
+        document.getElementById('dictateDisplayScreen').innerText = "_";
+        
+        // Evaluate condition for milestones comments 
+        checkStreaksMilestonesComments();
+
+        if (dictationStage === 'spelling') {
+            const letterCountPlaceholder = "?".repeat(currentDictationItem.eng.length);
+            document.getElementById('dictateAiStatus').innerText = `How do you spell [ ${letterCountPlaceholder} ] ?`;
+            document.getElementById('dictateTranscript').innerText = "Click the box above to hear the word again.";
+            
+            speakAI(`How do you spell, ${currentDictationItem.eng}?`);
+        } else if (dictationStage === 'meaning') {
+            document.getElementById('customKeyboard').style.display = 'none';
+            document.getElementById('marathiMicPanel').style.display = 'flex';
+            
+            document.getElementById('dictateAiStatus').innerText = "What is its Marathi meaning?";
+            document.getElementById('dictateDisplayScreen').innerText = currentDictationItem.eng.toUpperCase();
+            document.getElementById('dictateTranscript').innerText = "Tap the red microphone button and state the translation.";
+            
+            // Explicit vocal transition splits: English word followed by localized Marathi voice pack request
+            speakAI(`How does ${currentDictationItem.eng} spell, then tell its meaning in Marathi`, false, false, () => {
+                setTimeout(() => {
+                    speakAI("मराठी अर्थ सांगा.", true);
+                }, 150);
+            });
+        }
+    }
+
+    function checkStreaksMilestonesComments() {
+        const streakContainer = document.getElementById('streakCallout');
+        
+        if (successfulSpellingStreak > 0 && successfulSpellingStreak % 3 === 0) {
+            const comment = `Wow! ${successfulSpellingStreak} in a row!`;
+            streakContainer.innerText = comment;
+            streakContainer.style.display = 'block';
+            speakAI(`${comment}, Keep it up!`);
+        } else if (globalCompletedWordsCount === 15) {
+            const milestoneText = "Wow! You completed 15 words!";
+            streakContainer.innerText = milestoneText;
+            streakContainer.style.display = 'block';
+            speakAI(milestoneText);
+        } else {
+            streakContainer.style.display = 'none';
+        }
+    }
+
+    function evaluateCustomKeyboardSpelling() {
+        const targetWord = currentDictationItem.eng.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const processedUserValue = typedSpellingBuffer.toUpperCase().trim();
+
+        if (processedUserValue === targetWord) {
+            successfulSpellingStreak++;
+            globalCompletedWordsCount++;
+
+            document.getElementById('dictateAiStatus').innerText = "Perfect spelling!";
+            // Fix: Pronounce the English word instantly upon correct validation entry matching
+            speakAI(`Perfect! ${currentDictationItem.eng}.`, false, false, () => {
+                dictationStage = 'meaning';
+                setTimeout(triggerDictationQuestion, 400);
+            });
+        } else {
+            // Reset streak metrics logs immediately on errors
+            successfulSpellingStreak = 0;
+            
+            document.getElementById('dictateAiStatus').innerText = "Incorrect spelling.";
+            // Correct the mistake and queue it right back at the last slot dynamically
+            dictationQueue.push(currentDictationItem); 
+            
+            speakAI("Incorrect spelling.", false, false, () => {
+                speakAI("Let me spell it slowly for you.", false, false, () => {
+                    executeLiveSynchronizedSpelling(currentDictationItem.eng.toUpperCase());
+                });
+            });
+        }
+    }
+
+    // ─── Synchronized Letter Speller Animation Engine ──────────────────────────
+    function executeLiveSynchronizedSpelling(wordString) {
+        const targetLettersArray = wordString.split('');
+        let currentLoopIndex = 0;
+        let cumulativeLettersString = "";
+
+        function buildNextLetterSpokenFrame() {
+            if (currentLoopIndex >= targetLettersArray.length) {
+                // Completed tracking animation breakdown loop sequence, proceed forward safely
+                setTimeout(nextDictationTurn, 1400);
+                return;
+            }
+
+            const letterToSpeak = targetLettersArray[currentLoopIndex];
+            cumulativeLettersString += letterToSpeak;
+            
+            // Back spelling appears dynamically with previous letters preserved
+            document.getElementById('dictateDisplayScreen').innerText = cumulativeLettersString;
+            
+            speakAI(letterToSpeak, false, true, () => {
+                currentLoopIndex++;
+                setTimeout(buildNextLetterSpokenFrame, 250); 
+            });
+        }
+
+        buildNextLetterSpokenFrame();
+    }
+
+    // ─── Manual Marathi Speech Recognition Module ──────────────────────────────
+    function triggerMarathiMicSpeech() {
+        if (isMarathiRecording) {
+            killMarathiMicPipeline();
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Speech translation engine not supported natively on this browser.");
+            return;
+        }
+
+        marathiSpeechRecognizer = new SpeechRecognition();
+        marathiSpeechRecognizer.continuous = false;
+        marathiSpeechRecognizer.interimResults = false;
+        marathiSpeechRecognizer.lang = 'mr-IN'; 
+
+        marathiSpeechRecognizer.onstart = () => {
+            isMarathiRecording = true;
+            document.getElementById('micContainer').classList.add('listening');
+            document.getElementById('dictateTranscript').innerText = "Recording Marathi response track...";
+        };
+
+        marathiSpeechRecognizer.onerror = (e) => {
+            console.error(e);
+            killMarathiMicPipeline();
+        };
+
+        marathiSpeechRecognizer.onend = () => { killMarathiMicPipeline(); };
+
+        marathiSpeechRecognizer.onresult = (event) => {
+            const resultTextString = event.results[0][0].transcript.trim();
+            document.getElementById('dictateTranscript').innerText = `Spoken translation: "${resultTextString}"`;
+            
+            evaluateMarathiMeaningWithAI(resultTextString);
+        };
+
+        try { marathiSpeechRecognizer.start(); } catch(err){ console.error(err); }
+    }
+
+    function killMarathiMicPipeline() {
+        isMarathiRecording = false;
+        document.getElementById('micContainer').classList.remove('listening');
+        if (marathiSpeechRecognizer) {
+            try { marathiSpeechRecognizer.abort(); } catch(e){}
+            marathiSpeechRecognizer = null;
+        }
+    }
+
+    async function evaluateMarathiMeaningWithAI(userTextTranscription) {
+        document.getElementById('dictateAiStatus').innerText = "Analyzing definition matches...";
+        
+        const systemInstruction = `Verify Marathi translation input against context references. Target reference: "${currentDictationItem.mar}". English core target word context: "${currentDictationItem.eng}".
+If the user translation answer matches exactly, is a valid synonym variant, or implies the exact same linguistic definition framework in Marathi, output ONLY the string 'CORRECT'. Else output ONLY 'INCORRECT'.`;
+
+        try {
+            const evaluationOutput = await callGeminiWithRotation(`User input spoken value: ${userTextTranscription}`, systemInstruction);
+            
+            if (evaluationOutput.includes("CORRECT")) {
+                document.getElementById('dictateAiStatus').innerText = "Perfect meaning match!";
+                speakAI("Perfect meaning!", false, false, () => {
+                    setTimeout(nextDictationTurn, 600);
+                });
+            } else {
+                triggerMarathiTranslationFailure();
+            }
+        } catch (err) {
+            const fallbackCheckValue = userTextTranscription.toLowerCase();
+            const targetRefValue = currentDictationItem.mar.toLowerCase();
+            
+            if (fallbackCheckValue.includes(targetRefValue) || targetRefValue.includes(fallbackCheckValue)) {
+                document.getElementById('dictateAiStatus').innerText = "Perfect meaning match!";
+                speakAI("Perfect!", false, false, () => { nextDictationTurn(); });
+            } else {
+                triggerMarathiTranslationFailure();
+            }
+        }
+    }
+
+    function triggerMarathiTranslationFailure() {
+        document.getElementById('dictateAiStatus').innerText = `Incorrect definition match.`;
+        // Preserves letters on monitor display
+        document.getElementById('dictateDisplayScreen').innerText = currentDictationItem.mar;
+        
+        // Correct errors dynamically and move to last index slots loop
+        dictationQueue.push(currentDictationItem); 
+        
+        // Explicit fixes: speak failure notice with localized native Marathi voice engines pack
+        speakAI("Incorrect meaning.", false, false, () => {
+            speakAI(`The correct Marathi translation meaning is ${currentDictationItem.mar}`, true, false, () => {
+                setTimeout(nextDictationTurn, 1500);
+            });
+        });
+    }
+
+    // ─── Persistence Completion Manager ──────────────────────────────────────
+    function markCurrentSessionAsCompleted() {
+        if (!currentActiveSessionId) return;
+        const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
+        const targetedSession = historyData.find(s => s.id === currentActiveSessionId);
+        if (targetedSession) {
+            targetedSession.completed = true;
+            localStorage.setItem('vocab_history', JSON.stringify(historyData));
+            displayWorkspaceSession(targetedSession);
+            renderHistory();
+        }
     }
 
     // ─── History drawer ───────────────────────────────────────────────────────
@@ -1019,7 +1639,6 @@ Example Correct Output structure:
             return;
         }
 
-        // Group by date, filtered by search
         const groups = {};
         historyData.forEach(session => {
             const matchHeading = session.heading.toLowerCase().includes(searchTerm);
@@ -1038,10 +1657,11 @@ Example Correct Output structure:
             html += `<div class="history-date-group"><div class="history-date-title">📅 ${date}</div>`;
             groups[date].forEach(session => {
                 const preview = session.words.map(w => w.eng).join(', ');
+                // Dynamic Checkmark added inside the history tracking cards list view row
                 html += `
                     <div class="history-item-card" style="cursor:pointer;" onclick="loadSessionFromHistory(${session.id})">
                         <div class="history-item-meta"><span>⏱️ ${session.time}</span><span>${session.words.length} Items</span></div>
-                        <div class="history-item-title">${session.heading}</div>
+                        <div class="history-item-title">${session.heading} ${session.completed ? "<span style='color:#22c55e; margin-left:4px;'>✓</span>" : ""}</div>
                         <div class="history-item-preview">${preview}</div>
                     </div>
                 `;
@@ -1064,6 +1684,11 @@ Example Correct Output structure:
     // ─── Init ─────────────────────────────────────────────────────────────────
     window.onload = function () {
         renderHistory();
+        
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices();
+        }
+
         const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
         if (historyData.length > 0) displayWorkspaceSession(historyData[0]);
     };

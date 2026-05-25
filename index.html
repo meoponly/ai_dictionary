@@ -38,7 +38,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Prevent button selections or chrome default flashing bugs */
         button, .key-btn, .dictate-display-screen, .vocab-card {
             user-select: none;
             -webkit-user-select: none;
@@ -584,21 +583,23 @@
             align-items: center;
             justify-content: space-between;
             box-sizing: border-box;
-            padding: 24px;
+            padding: 16px 12px;
             font-family: var(--font-sans);
         }
 
         .dictate-header {
             width: 100%;
-            max-width: 900px;
+            max-width: 600px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 4px 8px;
+            box-sizing: border-box;
         }
 
         .dictate-title {
             font-family: var(--font-display);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             letter-spacing: -0.02em;
             color: #38bdf8;
@@ -608,10 +609,11 @@
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: #ffffff;
-            padding: 10px 20px;
-            border-radius: 12px;
+            padding: 8px 16px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
+            font-size: 0.85rem;
             transition: all 0.2s;
         }
 
@@ -624,78 +626,79 @@
             justify-content: center;
             text-align: center;
             flex: 1;
-            gap: 20px;
+            gap: 16px;
             width: 100%;
-            max-width: 750px;
+            max-width: 600px;
         }
 
         .dictate-ai-status {
             font-family: var(--font-display);
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: 700;
             line-height: 1.3;
             color: #f8fafc;
-            min-height: 60px;
+            min-height: 50px;
+            padding: 0 10px;
         }
 
         .streak-callout {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 800;
             color: #22c55e;
             background: rgba(34, 197, 94, 0.15);
-            padding: 4px 14px;
+            padding: 4px 12px;
             border-radius: 20px;
             border: 1px solid rgba(34, 197, 94, 0.3);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: -10px;
+            margin-bottom: -4px;
             display: none;
             animation: textPulse 1s infinite;
         }
 
-        /* Clickable interactive audio clue display mask wrapper box */
         .dictate-display-screen {
             font-family: var(--font-display);
-            font-size: 3rem;
+            font-size: 2.2rem;
             font-weight: 800;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.08em;
             color: #38bdf8;
             background: rgba(15, 23, 42, 0.6);
             border: 2px dashed #334155;
-            padding: 16px 40px;
-            border-radius: 20px;
-            min-width: 240px;
-            max-width: 90%;
+            padding: 12px 24px;
+            border-radius: 16px;
+            min-width: 200px;
+            max-width: 95%;
             text-transform: uppercase;
             box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
-            margin: 10px 0;
+            margin: 4px 0;
             cursor: pointer;
+            word-break: break-all;
             transition: all 0.2s ease;
         }
 
         .dictate-display-screen:hover {
             border-color: #38bdf8;
             background: rgba(56, 189, 248, 0.05);
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
 
         .dictate-user-transcript {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             color: #94a3b8;
             font-weight: 500;
-            min-height: 30px;
+            min-height: 24px;
+            padding: 0 12px;
         }
 
-        /* Custom Screen Keyboard Controls layout */
+        /* ─── Fully Mobile-Optimized On-Screen Keyboard ─── */
         .custom-keyboard-container {
             width: 100%;
-            max-width: 680px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            background: rgba(30, 41, 59, 0.7);
-            padding: 16px;
-            border-radius: 24px;
+            gap: 6px;
+            background: rgba(30, 41, 59, 0.85);
+            padding: 10px 6px;
+            border-radius: 20px;
             border: 1px solid #334155;
             box-sizing: border-box;
         }
@@ -703,43 +706,47 @@
         .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 4px;
             width: 100%;
         }
 
         .key-btn {
-            flex: 1;
-            max-width: 56px;
-            height: 58px;
+            /* 10 keys maximum per row format logic */
+            width: calc((100% - 36px) / 10);
+            height: 48px;
             background: #334155;
             border: none;
             color: #ffffff;
             font-family: var(--font-display);
-            font-size: 1.4rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px #1e293b;
-            transition: all 0.05s ease;
+            box-shadow: 0 3px #1e293b;
+            transition: transform 0.05s ease, background-color 0.2s;
         }
 
         .key-btn:active {
-            transform: translateY(3px);
+            transform: translateY(2px);
             box-shadow: 0 1px #1e293b;
+            background-color: #475569;
         }
 
         .key-btn.wide-key {
-            max-width: 110px;
-            font-size: 1.05rem;
+            width: calc((100% - 36px) / 5); /* Scales accurately matching letter keys widths balance */
+            font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.01em;
         }
 
-        .key-btn.erase-key { background: #b91c1c; box-shadow: 0 4px #7f1d1d; }
-        .key-btn.submit-key { background: #15803d; box-shadow: 0 4px #14532d; max-width: 130px; }
+        .key-btn.erase-key { background: #b91c1c; box-shadow: 0 3px #7f1d1d; }
+        .key-btn.erase-key:active { background-color: #dc2626; }
+        
+        .key-btn.submit-key { background: #15803d; box-shadow: 0 3px #14532d; width: calc((100% - 36px) / 4); }
+        .key-btn.submit-key:active { background-color: #16a34a; }
 
         /* Manual Marathi Input Controls Panel styles */
         .marathi-mic-panel {
@@ -752,21 +759,21 @@
             border-radius: 24px;
             border: 1px solid rgba(56, 189, 248, 0.2);
             width: 100%;
-            max-width: 400px;
+            max-width: 360px;
         }
 
         .mic-container {
             position: relative;
-            width: 96px;
-            height: 96px;
+            width: 88px;
+            height: 88px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .mic-button {
-            width: 76px;
-            height: 76px;
+            width: 68px;
+            height: 68px;
             border-radius: 50%;
             background: #ef4444;
             border: none;
@@ -776,17 +783,17 @@
             justify-content: center;
             z-index: 10;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
             transition: background-color 0.2s, transform 0.2s;
         }
 
         .mic-container.listening .mic-button {
             background: #22c55e;
-            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
-            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
+            transform: scale(1.03);
         }
 
-        .mic-button svg { width: 32px; height: 32px; fill: currentColor; }
+        .mic-button svg { width: 28px; height: 28px; fill: currentColor; }
 
         .mic-ripple {
             position: absolute;
@@ -803,19 +810,28 @@
         }
 
         .dictate-footer-tip {
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             color: #64748b;
             font-weight: 500;
             letter-spacing: 0.02em;
+            text-align: center;
+            padding: 4px 8px;
         }
 
         @keyframes micGlowRipple {
             0% { transform: scale(0.8); opacity: 0.9; }
-            100% { transform: scale(1.5); opacity: 0; }
+            100% { transform: scale(1.4); opacity: 0; }
         }
 
         @keyframes cardEmerging { to { opacity: 1; transform: translateY(0); } }
         @keyframes textPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        /* Media adjustments rules for super tight screen constraints */
+        @media (max-width: 360px) {
+            .key-btn { height: 42px; font-size: 1rem; }
+            .dictate-ai-status { font-size: 1.35rem; }
+            .dictate-display-screen { font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
@@ -1303,19 +1319,16 @@ Example Correct Output structure:
         const voices = window.speechSynthesis.getVoices();
 
         if (isMarathiLanguagePack) {
-            // Target authentic regional Marathi speech voice synthesis packs
             let marathiVoice = voices.find(v => v.lang.startsWith('mr-') || v.name.includes('Marathi'));
             if (marathiVoice) {
                 utterance.voice = marathiVoice;
             } else {
-                // Fallback to localized multi-lingual profiles if separate pack is absent
                 let alternativeInVoice = voices.find(v => v.lang.includes('IN'));
                 if (alternativeInVoice) utterance.voice = alternativeInVoice;
             }
             utterance.rate = 0.85;
             utterance.pitch = 1.0;
         } else {
-            // Standard high quality English Natural Pack profiles setup
             let premiumVoice = voices.find(v => v.name.includes('Natural') && (v.lang.startsWith('en-US') || v.lang.startsWith('en-GB')));
             if (!premiumVoice) premiumVoice = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en-'));
             if (!premiumVoice) premiumVoice = voices.find(v => v.lang.startsWith('en-IN') || v.name.includes('India'));
@@ -1340,7 +1353,6 @@ Example Correct Output structure:
         if (dictationStage === 'spelling') {
             speakAI(currentDictationItem.eng);
         } else {
-            // Replay Marathi sound pack safely
             speakAI(currentDictationItem.mar, true);
         }
     }
@@ -1367,7 +1379,6 @@ Example Correct Output structure:
         dictationQueue = [...activeWordsList];
         dictationQueue.sort(() => Math.random() - 0.5);
         
-        // Reset streak metrics logs
         successfulSpellingStreak = 0;
         globalCompletedWordsCount = 0;
         document.getElementById('streakCallout').style.display = 'none';
@@ -1387,7 +1398,6 @@ Example Correct Output structure:
 
     function nextDictationTurn() {
         if (dictationQueue.length === 0) {
-            // Commit and save successful session completion status tags 
             markCurrentSessionAsCompleted();
 
             document.getElementById('dictateAiStatus').innerText = "List Mastered! 🎉";
@@ -1410,7 +1420,6 @@ Example Correct Output structure:
         typedSpellingBuffer = "";
         document.getElementById('dictateDisplayScreen').innerText = "_";
         
-        // Evaluate condition for milestones comments 
         checkStreaksMilestonesComments();
 
         if (dictationStage === 'spelling') {
@@ -1427,7 +1436,6 @@ Example Correct Output structure:
             document.getElementById('dictateDisplayScreen').innerText = currentDictationItem.eng.toUpperCase();
             document.getElementById('dictateTranscript').innerText = "Tap the red microphone button and state the translation.";
             
-            // Explicit vocal transition splits: English word followed by localized Marathi voice pack request
             speakAI(`How does ${currentDictationItem.eng} spell, then tell its meaning in Marathi`, false, false, () => {
                 setTimeout(() => {
                     speakAI("मराठी अर्थ सांगा.", true);
@@ -1463,17 +1471,14 @@ Example Correct Output structure:
             globalCompletedWordsCount++;
 
             document.getElementById('dictateAiStatus').innerText = "Perfect spelling!";
-            // Fix: Pronounce the English word instantly upon correct validation entry matching
             speakAI(`Perfect! ${currentDictationItem.eng}.`, false, false, () => {
                 dictationStage = 'meaning';
                 setTimeout(triggerDictationQuestion, 400);
             });
         } else {
-            // Reset streak metrics logs immediately on errors
             successfulSpellingStreak = 0;
             
             document.getElementById('dictateAiStatus').innerText = "Incorrect spelling.";
-            // Correct the mistake and queue it right back at the last slot dynamically
             dictationQueue.push(currentDictationItem); 
             
             speakAI("Incorrect spelling.", false, false, () => {
@@ -1492,7 +1497,6 @@ Example Correct Output structure:
 
         function buildNextLetterSpokenFrame() {
             if (currentLoopIndex >= targetLettersArray.length) {
-                // Completed tracking animation breakdown loop sequence, proceed forward safely
                 setTimeout(nextDictationTurn, 1400);
                 return;
             }
@@ -1500,7 +1504,6 @@ Example Correct Output structure:
             const letterToSpeak = targetLettersArray[currentLoopIndex];
             cumulativeLettersString += letterToSpeak;
             
-            // Back spelling appears dynamically with previous letters preserved
             document.getElementById('dictateDisplayScreen').innerText = cumulativeLettersString;
             
             speakAI(letterToSpeak, false, true, () => {
@@ -1594,13 +1597,10 @@ If the user translation answer matches exactly, is a valid synonym variant, or i
 
     function triggerMarathiTranslationFailure() {
         document.getElementById('dictateAiStatus').innerText = `Incorrect definition match.`;
-        // Preserves letters on monitor display
         document.getElementById('dictateDisplayScreen').innerText = currentDictationItem.mar;
         
-        // Correct errors dynamically and move to last index slots loop
         dictationQueue.push(currentDictationItem); 
         
-        // Explicit fixes: speak failure notice with localized native Marathi voice engines pack
         speakAI("Incorrect meaning.", false, false, () => {
             speakAI(`The correct Marathi translation meaning is ${currentDictationItem.mar}`, true, false, () => {
                 setTimeout(nextDictationTurn, 1500);
@@ -1630,7 +1630,7 @@ If the user translation answer matches exactly, is a valid synonym variant, or i
     }
 
     function renderHistory() {
-        const content    = document.getElementById('historyContent');
+        const content = document.getElementById('historyContent');
         const searchTerm = document.getElementById('historySearch').value.toLowerCase();
         const historyData = JSON.parse(localStorage.getItem('vocab_history')) || [];
 
@@ -1657,7 +1657,6 @@ If the user translation answer matches exactly, is a valid synonym variant, or i
             html += `<div class="history-date-group"><div class="history-date-title">📅 ${date}</div>`;
             groups[date].forEach(session => {
                 const preview = session.words.map(w => w.eng).join(', ');
-                // Dynamic Checkmark added inside the history tracking cards list view row
                 html += `
                     <div class="history-item-card" style="cursor:pointer;" onclick="loadSessionFromHistory(${session.id})">
                         <div class="history-item-meta"><span>⏱️ ${session.time}</span><span>${session.words.length} Items</span></div>

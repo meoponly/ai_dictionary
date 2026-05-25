@@ -1026,7 +1026,6 @@
 
     // ─── Laptop Physical Keyboard Implementation ───
     document.addEventListener('keydown', (event) => {
-        // Only parse when dictation mode screen is active and on the spelling step
         if (document.getElementById('dictateOverlay').style.display !== 'flex') return;
         if (dictationStage !== 'spelling') return;
 
@@ -1314,7 +1313,7 @@ Output everything strictly on a single line matching this precise schema layout 
                     </div>
                     <button class="speak-btn" onclick="speakWord('${safeEng}', false)" title="Listen Audio">
                         <svg viewBox="0 0 24 24">
-                            <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91( 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-3 0L6 7H2v10h4l5 3.77V3.23z"/>
+                            <path d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-3 0L6 7H2v10h4l5 3.77V3.23z"/>
                         </svg>
                     </button>
                 </div>
@@ -1329,6 +1328,8 @@ Output everything strictly on a single line matching this precise schema layout 
     // ─── High-Tier Dual-Pack Text to Speech Voice Integration Engine ───
     function speakAI(text, isMarathiLanguagePack = false, slowLettersMode = false, callback = null) {
         window.speechSynthesis.cancel();
+        
+        // Use standard Web Speech API primitives directly to resolve layout mobile blocking bugs safely
         const utterance = new SpeechSynthesisUtterance(text);
         const voices = window.speechSynthesis.getVoices();
 
@@ -1359,7 +1360,7 @@ Output everything strictly on a single line matching this precise schema layout 
         }
 
         utterance.volume = 1.0;
-        utterance.onend = () => { if (callback) callback(); };
+        if (callback) utterance.onend = () => { callback(); };
         window.speechSynthesis.speak(utterance);
     }
 
@@ -1502,7 +1503,7 @@ Output everything strictly on a single line matching this precise schema layout 
         }
     }
 
-    // ─── Blazing Fast Gemini Minor Mistake Visual Highlighter & Explainer Engine ───
+    // ─── Gemini Minor Mistake Visual Highlighter Engine ───
     async function analyzeMinorMistakeWithAI(userAttempt, correctWord) {
         const systemInstruction = `You are a spelling evaluator. Compare student typed user attempt text "${userAttempt}" against target correct word "${correctWord}".
 If it is a minor vowel substitution mistake, mismatched vowel, or alternate character error, respond ONLY in this exact format pattern:

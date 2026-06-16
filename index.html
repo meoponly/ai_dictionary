@@ -6,6 +6,13 @@
     <title>AI Dictionary</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%230284c7%22><path d=%22M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25%22/></svg>">
 
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0284c7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AI Dictionary">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -2381,17 +2388,43 @@ If nothing found: [No Words Found] None*None-कोणतेही शब्द 
     }
 
     // ─── Speech ───────────────────────────────────────────────────────────────
-    function speakWord(word) {
-        window.speechSynthesis.cancel();
+    let _currentAudio = null;
+    async function speakWord(word) {
+        if (_currentAudio) {
+            _currentAudio.pause();
+            _currentAudio = null;
+        }
+        window.speechSynthesis && window.speechSynthesis.cancel();
+
+        // Google Translate TTS — consistent female voice, same every time
+        const gttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(word)}&tl=en&client=tw-ob&ttsspeed=0.8`;
+        try {
+            _currentAudio = new Audio(gttsUrl);
+            _currentAudio.volume = 1.0;
+            await _currentAudio.play();
+            return;
+        } catch(e) {
+            // Google TTS blocked (CORS) — fall through to speechSynthesis
+        }
+
+        // Fallback: speechSynthesis — pick a consistent female voice
+        if (!window.speechSynthesis) return;
         const utterance = new SpeechSynthesisUtterance(word);
-        const voices    = window.speechSynthesis.getVoices();
-        const preferred = voices.find(v => v.lang === 'en-IN' || v.name.includes('India'));
-        if (preferred) utterance.voice = preferred;
-        else utterance.lang = 'en-IN';
-        utterance.volume = 1.0;
-        utterance.rate   = 0.85;
-        utterance.pitch  = 0.95;
-        window.speechSynthesis.speak(utterance);
+        const trySpeak = () => {
+            const voices = window.speechSynthesis.getVoices();
+            // Priority: female English voices
+            const femaleVoice = voices.find(v => /female|zira|susan|hazel|samantha|karen|moira|tessa/i.test(v.name) && v.lang.startsWith('en'))
+                || voices.find(v => v.lang === 'en-US')
+                || voices.find(v => v.lang.startsWith('en'));
+            if (femaleVoice) utterance.voice = femaleVoice;
+            utterance.lang   = 'en-US';
+            utterance.volume = 1.0;
+            utterance.rate   = 0.82;
+            utterance.pitch  = 1.1;
+            window.speechSynthesis.speak(utterance);
+        };
+        if (window.speechSynthesis.getVoices().length) trySpeak();
+        else window.speechSynthesis.onvoiceschanged = trySpeak;
     }
 
     // ─── History drawer ───────────────────────────────────────────────────────
@@ -2463,5 +2496,50 @@ If nothing found: [No Words Found] None*None-कोणतेही शब्द 
     };
 </script>
 
+
+<script>
+    // ─── PWA Install Prompt ───────────────────────────────────────────────────
+    let _deferredPrompt = null;
+
+    const installBtn = document.createElement('button');
+    installBtn.id = 'pwa-install-btn';
+    installBtn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 16l-4-4h3V4h2v8h3l-4 4z"/><path d="M4 20h16"/></svg> Install App`;
+    installBtn.style.cssText = `
+        display:none; position:fixed; bottom:24px; right:24px; z-index:9999;
+        background:#0284c7; color:#fff; border:none; border-radius:14px;
+        padding:12px 20px; font-size:0.9rem; font-weight:700; cursor:pointer;
+        box-shadow:0 4px 20px rgba(2,132,199,0.4); gap:8px;
+        align-items:center; font-family:inherit;
+        transition: transform 0.2s, box-shadow 0.2s;
+    `;
+    installBtn.onmouseenter = () => installBtn.style.transform = 'translateY(-2px)';
+    installBtn.onmouseleave = () => installBtn.style.transform = 'translateY(0)';
+    document.body.appendChild(installBtn);
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        _deferredPrompt = e;
+        installBtn.style.display = 'flex';
+    });
+
+    installBtn.addEventListener('click', async () => {
+        if (!_deferredPrompt) return;
+        _deferredPrompt.prompt();
+        const { outcome } = await _deferredPrompt.userChoice;
+        if (outcome === 'accepted') installBtn.style.display = 'none';
+        _deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installBtn.style.display = 'none';
+    });
+
+    // ─── Service Worker ───────────────────────────────────────────────────────
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+</script>
+
 </body>
 </html>
+<!-- This line intentionally blank -->

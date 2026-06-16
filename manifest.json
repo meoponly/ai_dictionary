@@ -1,0 +1,22 @@
+{
+  "name": "AI Dictionary",
+  "short_name": "AI Dict",
+  "description": "AI-powered Marathi & English Dictionary",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0284c7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230284c7'/><path d='M48 56A24 24 0 0 1 72 32c8 0 15 3 20 8A24 24 0 0 1 116 32c13 0 24 11 24 24 0 8-4 15-10 20l-30 28-30-28c-6-5-10-12-10-20z' fill='white'/><rect x='60' y='110' width='72' height='8' rx='4' fill='white'/><rect x='68' y='126' width='56' height='8' rx='4' fill='white'/><rect x='76' y='142' width='40' height='8' rx='4' fill='white'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%230284c7'/><path d='M128 149A64 64 0 0 1 192 85c21 0 40 9 53 22A64 64 0 0 1 309 85c35 0 64 29 64 64 0 21-10 40-26 53l-81 74-81-74c-16-13-26-32-26-53z' fill='white'/><rect x='160' y='293' width='192' height='21' rx='10' fill='white'/><rect x='181' y='336' width='150' height='21' rx='10' fill='white'/><rect x='203' y='379' width='106' height='21' rx='10' fill='white'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
